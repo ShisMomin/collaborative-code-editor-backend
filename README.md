@@ -1,15 +1,31 @@
-# backend
+# Collaborative Code Editor Backend
 
-To install dependencies:
+Backend for a realtime collaborative code editor.
+
+## Tech Stack
+
+- Bun
+- TypeScript
+- hono
+- PostgreSQL
+- Docker
+- Drizzle ORM
+- Better Auth
+- Socket.IO
+
+## Features
+
+- Authentication
+- Projects
+- File Management
+- Realtime Collaboration
+- Cursor Presence
+- Project Invitations
+
+## Run
 
 ```bash
+docker compose up -d
 bun install
+bun run dev
 ```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.11. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
