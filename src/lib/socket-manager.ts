@@ -1,0 +1,39 @@
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
+class SocketManager {
+    private static instance: SocketManager;
+    public io: SocketIOServer;
+    private httpServer: ReturnType<typeof createServer>;
+    private constructor() {
+        this.httpServer = createServer();
+        this.io = new SocketIOServer(this.httpServer, {
+            path: '/',
+            cors: {
+                origin: ['http://localhost:3000', 'https://admin.socket.io'],
+                credentials: true,
+            },
+        });
+        const port = process.env.WS_PORT || 4001;
+        this.httpServer.listen(port, () => {
+            console.log(`Socket.IO server listening on port ${port}`);
+        });
+        this.initialize();
+    }
+    private initialize() {
+        this.io.on('connection', (socket) => {
+            console.log(`user connected ${socket.id}`);
+            socket.on('disconnect', () => {
+                console.log(`User disconnected ${socket.id}`);
+            });
+        });
+        instrument(this.io, { auth: false, mode: 'development' });
+    }
+    public static getInstance(): SocketManager {
+        if (!SocketManager.instance) {
+            SocketManager.instance = new SocketManager();
+        }
+        return SocketManager.instance;
+    }
+}
+export const socketManager = SocketManager.getInstance();
