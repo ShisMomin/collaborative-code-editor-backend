@@ -15,6 +15,13 @@
       "when": 1779026301802,
       "tag": "0001_modern_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781952444049,
+      "tag": "0002_wooden_meltdown",
+      "breakpoints": true
     }
   ]
 }
