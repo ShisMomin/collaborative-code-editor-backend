@@ -1,0 +1,31 @@
+import { auth } from '@/lib/auth';
+import { type AppContext } from '@/types';
+import { type Context } from 'hono';
+
+export const setAuthContext = async (
+    c: Context<AppContext>,
+    next: () => Promise<void>,
+) => {
+    const session = await auth.api.getSession({ headers: c.req.raw.headers });
+    if (!session) {
+        c.set('user', null);
+        c.set('session', null);
+        await next();
+        return;
+    }
+    c.set('user', session.user);
+    c.set('session', session.session);
+    await next();
+};
+
+export const requireAuth = async (
+    c: Context<AppContext>,
+    next: () => Promise<void>,
+) => {
+    const user = c.get('user');
+    const session = c.get('session');
+    if (!user || !session) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    await next();
+};
