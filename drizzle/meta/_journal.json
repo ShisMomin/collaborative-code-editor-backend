@@ -22,6 +22,13 @@
       "when": 1781952444049,
       "tag": "0002_wooden_meltdown",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782229511120,
+      "tag": "0003_warm_impossible_man",
+      "breakpoints": true
     }
   ]
 }

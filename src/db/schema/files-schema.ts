@@ -1,4 +1,5 @@
 import {
+    boolean,
     index,
     pgTable,
     text,
@@ -28,6 +29,7 @@ export const file = pgTable(
         }).notNull(),
         type: fileTypeEnum('type').notNull(),
         content: text('content'),
+        isReadOnly: boolean('is_read_only').notNull().default(false),
         language: fileLanguageEnum('language'),
         createdAt: timestamp('created_at', {
             withTimezone: true,

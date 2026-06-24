@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import { createProjectSchema } from './project.validation';
-import { projectService } from './project.service';
+import { projectService } from '@/services/projects/project.service';
 
 export const createProject = async (c: Context) => {
     // Parse request body

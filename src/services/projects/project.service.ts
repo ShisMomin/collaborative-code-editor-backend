@@ -1,8 +1,12 @@
 import { db } from '@/db';
-import type { CreateProjectServiceInput } from './project.validation';
+import type { CreateProjectServiceInput } from '@/api/projects/project.validation';
 import { project as projectTable } from '@/db/schema/projects-schema';
 import { projectMember as projectMemberTable } from '@/db/schema/project-members-schema';
 import { activity as activityTable } from '@/db/schema/activities-schema';
+import { loadTemplateService } from '../templates/load-template.service';
+import { templateTreeService } from '../templates/template-tree.service';
+import { insertTemplateService } from '../templates/insert-template.service';
+import { AppError } from '@/errors';
 
 export const projectService = {
     async createProject({
@@ -23,8 +27,9 @@ export const projectService = {
                 .returning();
 
             if (!newProject) {
-                throw new Error('Failed to create project.');
+                throw new AppError(500, 'Failed to create project.');
             }
+
             // The project creator is automatically added as the owner.
             // This determines their permissions within the project.
             await tx.insert(projectMemberTable).values({
@@ -41,6 +46,18 @@ export const projectService = {
                 type: 'PROJECT_CREATED',
                 metadata: {},
             });
+
+            // Locate the selected template on disk (e.g. react-ts, react-js nextjs, etc.).
+            // The template contains the initial file and folder structure for the project.
+            const templatePath = loadTemplateService.getTemplatePath(template);
+
+            // Convert the template directory into an in-memory tree structure
+            // so it can be recursively inserted into the database.
+            const tree = templateTreeService.build(templatePath);
+
+            // Populate the newly created project with the template files and folders.
+            // This gives the user a ready-to-use starting workspace immediately after creation.
+            await insertTemplateService.insert(tx, newProject.id, tree);
             return newProject;
         });
     },

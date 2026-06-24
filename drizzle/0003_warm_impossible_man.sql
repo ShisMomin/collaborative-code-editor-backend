@@ -1,0 +1,1 @@
+ALTER TABLE "files" ADD COLUMN "is_read_only" boolean DEFAULT false NOT NULL;
